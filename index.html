@@ -51,6 +51,17 @@
 		    	L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo( mymap );
 		    }
 			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
+			if ( to.length > 0 ) {
+				console.log( "updating distance..." );
+				newdist = getDistance( from.getLatLng(), to.getLatLng() );
+		        if ( newdist != olddist ) {
+					console.log( newdist + ' mi' );
+					olddist = newdist;
+					if ( newdist < 0.021 ) {
+						console.log( "you made it, you're there!" );
+					}
+				}
+			}
 			document.getElementById( "getting-location" ).style.display = "none";
 			document.getElementById( "mapid" ).style.display = "block";
 			mymap.on( 'click', function( e ) {
@@ -60,7 +71,7 @@
 				addMarker( e );
 			});
 			function getDistance( from, to ) {
-			    return ( ( from.distanceTo( to ) ).toFixed( 0 ) / 1609.344 ).toFixed( 3 ) + ' mi';
+			    return ( from.distanceTo( to ).toFixed( 0 ) / 1609.344 ).toFixed( 3 );
 			}
 		    function addMarkerByDragging( latlng ) {
 				if ( to != [] ) {
@@ -73,8 +84,11 @@
 		        mymap.addLayer( to );
 		        newdist = getDistance( from.getLatLng(), to.getLatLng() );
 		        if ( newdist != olddist ) {
-					console.log( newdist );
+					console.log( newdist + ' mi' );
 					olddist = newdist;
+					if ( newdist < 0.021 ) {
+						console.log( "you made it, you're there!" );
+					}
 				}
 		    };
 		    function addMarker( e ) {
@@ -88,8 +102,11 @@
 		        mymap.addLayer( to );
 		        newdist = getDistance( from.getLatLng(), to.getLatLng() );
 		        if ( newdist != olddist ) {
-					console.log( newdist );
+					console.log( newdist + ' mi' );
 					olddist = newdist;
+					if ( newdist < 0.021 ) {
+						console.log( "you made it, you're there!" );
+					}
 				}
 			}
 		}
