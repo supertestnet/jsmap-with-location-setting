@@ -25,7 +25,7 @@
 		  if ( navigator.geolocation ) {
 		      navigator.geolocation.watchPosition( watchUsersPosition, error, options );
 		  } else {
-		      console.log( "Geolocation is not supported by this browser." );
+		      console.error( "Geolocation is not supported by this browser." );
 		  }
 		}
 	  	var lat = 38;
@@ -43,10 +43,10 @@
 		var from = [];
 		var to = [];
 		function watchUsersPosition( position ) {
-			if ( from ) {
+			if ( from != [] ) {
 				mymap.removeLayer( from );
 			}
-			if ( to = [] ) {
+			if ( to.length == 0 ) {
 		    	L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo( mymap );
 		    }
 			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
@@ -73,7 +73,6 @@
 				console.log( getDistance( from.getLatLng(), to.getLatLng() ) );
 		    };
 		    function addMarker( e ) {
-		    	console.log( to );
 				if ( to != [] ) {
 					mymap.removeLayer( to );
 				}
