@@ -42,6 +42,7 @@
 		});
 		var from = [];
 		var to = [];
+		var olddist = "";
 		function watchUsersPosition( position ) {
 			if ( from != [] ) {
 				mymap.removeLayer( from );
@@ -70,7 +71,11 @@
 		        	addMarkerByDragging( event.target._latlng );
 		        });
 		        mymap.addLayer( to );
-				console.log( getDistance( from.getLatLng(), to.getLatLng() ) );
+		        newdist = getDistance( from.getLatLng(), to.getLatLng() );
+		        if ( newdist != olddist ) {
+					console.log( newdist );
+					olddist = newdist;
+				}
 		    };
 		    function addMarker( e ) {
 				if ( to != [] ) {
@@ -81,7 +86,11 @@
 		        	addMarkerByDragging( event.target._latlng );
 		        });
 		        mymap.addLayer( to );
-				console.log( getDistance( from.getLatLng(), to.getLatLng() ) );
+		        newdist = getDistance( from.getLatLng(), to.getLatLng() );
+		        if ( newdist != olddist ) {
+					console.log( newdist );
+					olddist = newdist;
+				}
 			}
 		}
 		getFirstLocation();
