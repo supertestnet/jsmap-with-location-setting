@@ -23,7 +23,7 @@
 		}
 		function getFirstLocation() {
 		  if ( navigator.geolocation ) {
-		      navigator.geolocation.watchPosition( watchUsersPosition, error, options );
+		      id = navigator.geolocation.watchPosition( watchUsersPosition, error, options );
 		  } else {
 		      console.error( "Geolocation is not supported by this browser." );
 		  }
@@ -59,6 +59,7 @@
 					console.log( newdist + ' mi' );
 					olddist = newdist;
 					if ( newdist < 0.021 ) {
+						navigator.geolocation.clearWatch( id );
 						alert( "you made it, you're there!" );
 					}
 				}
