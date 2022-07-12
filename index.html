@@ -56,6 +56,8 @@
 			mymap.on( 'click', function( e ) {
 				if ( to ) {
 					mymap.removeLayer( to );
+					to = [];
+					tolatlng = [];
 				}
 				addMarker( e );
 			});
