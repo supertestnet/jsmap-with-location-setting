@@ -52,13 +52,13 @@
 		    }
 			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
 			if ( to.length > 0 ) {
-				console.log( "updating distance..." );
 				newdist = getDistance( from.getLatLng(), to.getLatLng() );
+				alert( "updating distance...", newdist + " mi" );
 		        if ( newdist != olddist ) {
 					console.log( newdist + ' mi' );
 					olddist = newdist;
 					if ( newdist < 0.021 ) {
-						console.log( "you made it, you're there!" );
+						alert( "you made it, you're there!" );
 					}
 				}
 			}
