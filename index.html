@@ -40,18 +40,19 @@
 			popupAnchor: [1, -34],
 			shadowSize: [41, 41]
 		});
-		var from = [];
-		var to = [];
+		var from = {};
+		var to = {};
 		var olddist = "";
 		function watchUsersPosition( position ) {
-			if ( from != [] ) {
+			if ( from != {} ) {
 				mymap.removeLayer( from );
 			}
-			if ( to.length == 0 ) {
+			if ( Object.keys( to ).length == 0 ) {
 		    	L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo( mymap );
 		    }
 			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
-			if ( to.length > 0 ) {
+			console.log( "to length:", Object.keys( to ).length );
+			if ( Object.keys( to ).length > 0 ) {
 				newdist = getDistance( from.getLatLng(), to.getLatLng() );
 				alert( "updating distance...", newdist + " mi" );
 		        if ( newdist != olddist ) {
@@ -65,7 +66,7 @@
 			document.getElementById( "getting-location" ).style.display = "none";
 			document.getElementById( "mapid" ).style.display = "block";
 			mymap.on( 'click', function( e ) {
-				if ( to != [] ) {
+				if ( to != {} ) {
 					mymap.removeLayer( to );
 				}
 				addMarker( e );
@@ -74,7 +75,7 @@
 			    return ( from.distanceTo( to ).toFixed( 0 ) / 1609.344 ).toFixed( 3 );
 			}
 		    function addMarkerByDragging( latlng ) {
-				if ( to != [] ) {
+				if ( to != {} ) {
 					mymap.removeLayer( to );
 				}
 		        to = new L.Marker( latlng, { draggable: true, icon: redIcon } );
@@ -92,7 +93,7 @@
 				}
 		    };
 		    function addMarker( e ) {
-				if ( to != [] ) {
+				if ( to != {} ) {
 					mymap.removeLayer( to );
 				}
 		        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
