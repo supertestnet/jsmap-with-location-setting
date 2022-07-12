@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+	<script type="text/javascript">var link = document.createElement("link");link.rel="stylesheet";link.href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css";link.integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==";link.setAttribute("crossorigin", "");document.getElementsByTagName("head")[0].appendChild(link);</script>
+
+	<script type="text/javascript">var style = document.createElement("style");var css = document.createTextNode("#mapid {height: 486px;}");style.appendChild(css);document.getElementsByTagName("head")[0].appendChild(style);</script>
+
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+	<div id="getting-location">Getting your location...</div>
+	<div id="mapid"></div>
+	<script>
+		var options;
+		options = {
+		  enableHighAccuracy: true,
+		  timeout: 15000,
+		  maximumAge: 5000
+		};
+		function error( err ) {
+		  console.warn( 'ERROR( ' + err.code + ' ): ' + err.message );
+		}
+		function getFirstLocation() {
+		  if ( navigator.geolocation ) {
+		      navigator.geolocation.watchPosition( watchUsersPosition, error, options );
+		  } else {
+		      console.log( "Geolocation is not supported by this browser." );
+		  }
+		}
+	  	var lat = 38;
+	  	var lng = -95;
+	  	var zm = 4.3;
+		var mymap = L.map( 'mapid' ).setView( [lat, lng], zm );
+		var redIcon = new L.Icon({
+			iconUrl: 'https://streetevangelization.com/wp-content/uploads/2019/09/marker-icon-red.png',
+			shadowUrl: 'https://streetevangelization.com/wp-content/uploads/2019/09/marker-shadow.png',
+			iconSize: [25, 41],
+			iconAnchor: [12, 41],
+			popupAnchor: [1, -34],
+			shadowSize: [41, 41]
+		});
+		var from = [];
+		var fromlatlng = [];
+		function watchUsersPosition( position ) {
+			if ( from ) {
+				mymap.removeLayer( from );
+			}
+		    L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo( mymap );
+			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
+			fromlatlng = from.getLatLng();
+			document.getElementById( "getting-location" ).style.display = "none";
+			document.getElementById( "mapid" ).style.display = "block";
+			mymap.on( 'click', function( e ) {
+				if ( to ) {
+					mymap.removeLayer( to );
+				}
+				addMarker( e );
+			});
+			function getDistance( from, to ) {
+			    return ( ( from.distanceTo( to ) ).toFixed( 0 ) / 1000 ) + ' km';
+			}
+		    function addMarkerByDragging( latlng ) {
+				mymap.removeLayer( to );
+		        to = new L.Marker( latlng, { draggable: true, icon: redIcon } );
+		        to.on( 'dragend', function( event ) {
+		        	addMarkerByDragging( event.target._latlng );
+		        });
+		        mymap.addLayer( to );
+				var tolatlng = to.getLatLng();
+				console.log( getDistance( fromlatlng, tolatlng ) );
+		    };
+			if ( !to ) {
+			    var to;
+			    function addMarker( e ) {
+			        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
+			        to.on( 'dragend', function( event ) {
+			        	addMarkerByDragging( event.target._latlng );
+			        });
+			        mymap.addLayer( to );
+					var tolatlng = to.getLatLng();
+					console.log( getDistance( fromlatlng, tolatlng ) );
+			    };
+			}
+		}
+		getFirstLocation();
+		function showSubsequentPositions( position ) {
+			mymap.removeLayer( from );
+			from = L.marker( [ position.coords.latitude, position.coords.longitude ], {icon: redIcon} ).addTo( mymap );
+			fromlatlng = from.getLatLng();
+		}
+	 </script>
+</body>
+</html>
