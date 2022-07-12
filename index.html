@@ -43,7 +43,6 @@
 		var from = [];
 		var fromlatlng = [];
 		var to = [];
-		var tolatlng = [];
 		function watchUsersPosition( position ) {
 			if ( from ) {
 				mymap.removeLayer( from );
@@ -54,36 +53,36 @@
 			document.getElementById( "getting-location" ).style.display = "none";
 			document.getElementById( "mapid" ).style.display = "block";
 			mymap.on( 'click', function( e ) {
-				if ( to ) {
+				if ( to != [] ) {
 					mymap.removeLayer( to );
-					to = [];
-					tolatlng = [];
 				}
 				addMarker( e );
 			});
 			function getDistance( from, to ) {
-			    return ( ( from.distanceTo( to ) ).toFixed( 0 ) / 1000 ) + ' km';
+			    return ( ( from.distanceTo( to ) ).toFixed( 0 ) / 1609.344 ).toFixed( 3 ) + ' mi';
 			}
 		    function addMarkerByDragging( latlng ) {
-				mymap.removeLayer( to );
+				if ( to != [] ) {
+					mymap.removeLayer( to );
+				}
 		        to = new L.Marker( latlng, { draggable: true, icon: redIcon } );
 		        to.on( 'dragend', function( event ) {
 		        	addMarkerByDragging( event.target._latlng );
 		        });
 		        mymap.addLayer( to );
-				tolatlng = to.getLatLng();
-				console.log( getDistance( fromlatlng, tolatlng ) );
+				console.log( getDistance( fromlatlng, to.getLatLng() ) );
 		    };
-			if ( to.length == 0 ) {
-			    function addMarker( e ) {
-			        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
-			        to.on( 'dragend', function( event ) {
-			        	addMarkerByDragging( event.target._latlng );
-			        });
-			        mymap.addLayer( to );
-					tolatlng = to.getLatLng();
-					console.log( getDistance( fromlatlng, tolatlng ) );
-			    };
+		    function addMarker( e ) {
+		    	console.log( to );
+				if ( to != [] ) {
+					mymap.removeLayer( to );
+				}
+		        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
+		        to.on( 'dragend', function( event ) {
+		        	addMarkerByDragging( event.target._latlng );
+		        });
+		        mymap.addLayer( to );
+				console.log( getDistance( fromlatlng, to.getLatLng() ) );
 			}
 		}
 		getFirstLocation();
