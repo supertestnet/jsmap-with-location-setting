@@ -43,6 +43,7 @@
 		var from = {};
 		var to = {};
 		var olddist = "";
+		var finalized = false;
 		function watchUsersPosition( position ) {
 			if ( from != {} ) {
 				mymap.removeLayer( from );
@@ -54,7 +55,6 @@
 			console.log( "to length:", Object.keys( to ).length );
 			if ( Object.keys( to ).length > 0 ) {
 				newdist = getDistance( from.getLatLng(), to.getLatLng() );
-				alert( "updating distance... " + newdist + " mi" );
 		        if ( newdist != olddist ) {
 					console.log( newdist + ' mi' );
 					olddist = newdist;
@@ -67,37 +67,61 @@
 			document.getElementById( "getting-location" ).style.display = "none";
 			document.getElementById( "mapid" ).style.display = "block";
 			mymap.on( 'click', function( e ) {
-				if ( to != {} ) {
-					mymap.removeLayer( to );
-				}
 				addMarker( e );
 			});
 			function getDistance( from, to ) {
 			    return ( from.distanceTo( to ).toFixed( 0 ) / 1609.344 ).toFixed( 3 );
 			}
 		    function addMarkerByDragging( latlng ) {
-				if ( to != {} ) {
-					mymap.removeLayer( to );
-				}
-		        to = new L.Marker( latlng, { draggable: true, icon: redIcon } );
-		        to.on( 'dragend', function( event ) {
-		        	addMarkerByDragging( event.target._latlng );
-		        });
-		        mymap.addLayer( to );
-		        newdist = getDistance( from.getLatLng(), to.getLatLng() );
-		        if ( newdist != olddist ) {
-					console.log( newdist + ' mi' );
-					olddist = newdist;
-					if ( newdist < 0.021 ) {
-						console.log( "you made it, you're there!" );
+		    	if ( finalized == false ) {
+					if ( to != {} ) {
+						mymap.removeLayer( to );
+					}
+			        to = new L.Marker( latlng, { draggable: true, icon: redIcon } );
+			        to.on( 'dragend', function( event ) {
+			        	addMarkerByDragging( event.target._latlng );
+			        });
+			        mymap.addLayer( to );
+			        newdist = getDistance( from.getLatLng(), to.getLatLng() );
+			        if ( newdist != olddist ) {
+						console.log( newdist + ' mi' );
+						olddist = newdist;
+						var dest_is_final = confirm( "Please click ok if you are sure this is where you want to go" );
+						if ( dest_is_final ) {
+							console.log( "the destination is final" );
+							addFinalMarker( to.getLatLng() );
+						}
 					}
 				}
 		    };
 		    function addMarker( e ) {
+		    	if ( finalized == false ) {
+					if ( to != {} ) {
+						mymap.removeLayer( to );
+					}
+			        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
+			        to.on( 'dragend', function( event ) {
+			        	addMarkerByDragging( event.target._latlng );
+			        });
+			        mymap.addLayer( to );
+			        newdist = getDistance( from.getLatLng(), to.getLatLng() );
+			        if ( newdist != olddist ) {
+						console.log( newdist + ' mi' );
+						olddist = newdist;
+						var dest_is_final = confirm( "Please click ok if you are sure this is where you want to go" );
+						if ( dest_is_final ) {
+							console.log( "the destination is final" );
+							addFinalMarker( to.getLatLng() );
+						}
+					}
+				}
+			}
+		    function addFinalMarker( latlng ) {
+		    	finalized = true;
 				if ( to != {} ) {
 					mymap.removeLayer( to );
 				}
-		        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
+		        to = new L.Marker( latlng, { draggable: false, icon: redIcon } );
 		        to.on( 'dragend', function( event ) {
 		        	addMarkerByDragging( event.target._latlng );
 		        });
@@ -106,8 +130,9 @@
 		        if ( newdist != olddist ) {
 					console.log( newdist + ' mi' );
 					olddist = newdist;
-					if ( newdist < 0.021 ) {
-						console.log( "you made it, you're there!" );
+					var dest_is_final = confirm( "Please click ok if you are sure this is where you want to go" );
+					if ( dest_is_final ) {
+						console.log( "the destination is final" );
 					}
 				}
 			}
