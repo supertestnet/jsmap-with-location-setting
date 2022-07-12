@@ -42,6 +42,8 @@
 		});
 		var from = [];
 		var fromlatlng = [];
+		var to = [];
+		var tolatlng = [];
 		function watchUsersPosition( position ) {
 			if ( from ) {
 				mymap.removeLayer( from );
@@ -67,18 +69,17 @@
 		        	addMarkerByDragging( event.target._latlng );
 		        });
 		        mymap.addLayer( to );
-				var tolatlng = to.getLatLng();
+				tolatlng = to.getLatLng();
 				console.log( getDistance( fromlatlng, tolatlng ) );
 		    };
-			if ( !to ) {
-			    var to;
+			if ( to.length == 0 ) {
 			    function addMarker( e ) {
 			        to = new L.Marker( e.latlng, { draggable: true, icon: redIcon } );
 			        to.on( 'dragend', function( event ) {
 			        	addMarkerByDragging( event.target._latlng );
 			        });
 			        mymap.addLayer( to );
-					var tolatlng = to.getLatLng();
+					tolatlng = to.getLatLng();
 					console.log( getDistance( fromlatlng, tolatlng ) );
 			    };
 			}
